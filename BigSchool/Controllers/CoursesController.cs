@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -57,6 +58,49 @@ namespace BigSchool.Models
                 courses.Add(objCourse);
             }
             return View(courses);
+        }
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            BigSchoolContext context = new BigSchoolContext();
+            Course c = context.Course.SingleOrDefault(p => p.Id == id);
+            return View(c);
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Course c)
+        {
+            BigSchoolContext context = new BigSchoolContext();
+            Course dbUpdate = context.Course.SingleOrDefault(p => p.Id == c.Id);
+            if (dbUpdate != null)
+            {
+                context.Course.AddOrUpdate(c);
+                context.SaveChanges();
+            }
+            return RedirectToAction("Mine");
+        }
+
+        [HttpGet]
+        public ActionResult Detele(int id)
+        {
+            BigSchoolContext context = new BigSchoolContext();
+            Course c = context.Course.SingleOrDefault(p => p.Id == id);
+            return View(c);
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Detele(Course c)
+        {
+            BigSchoolContext context = new BigSchoolContext();
+            Course dbDetele = context.Course.SingleOrDefault(p => p.Id == c.Id);
+            if (dbDetele != null)
+            {
+                context.Course.Remove(dbDetele);
+                context.SaveChanges();
+            }
+            return RedirectToAction("Mine");
         }
 
         public ActionResult Mine()
